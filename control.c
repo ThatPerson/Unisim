@@ -1,18 +1,18 @@
 #include <stdio.h>
 #include <math.h>
-#define G 6.67*10^-11
+#define G 1
 
-typedef struct e_vector {
+typedef struct {
 	float x, y, z;
-};
+} e_vector;
 
-typedef struct particle {
+typedef struct {
 	e_vector velocity;
 	e_vector location;
 	float mass;
-};
+} particle;
 
-float abs(float p) {
+float abs_r(float p) {
 	if (p < 0)
 		return 0-p;
 	return p;
@@ -29,17 +29,36 @@ float magnitude(e_vector a, e_vector b) {
 
 e_vector gravity_calculate(particle a, particle b) {
 	e_vector q, r;
-	q.x = b.x - a.x;
-	q.y = b.y - a.y;
-	q.z = b.z - a.z; // Basically, we just get the distance between them as e_vector. This is relative to a - a + q = b.
+	q.x = b.location.x - a.location.x;
+	q.y = b.location.y - a.location.y;
+	q.z = b.location.z - a.location.z; // Basically, we just get the distance between them as e_vector. This is relative to a - a + q = b.
 	float distance = magnitude(a.location, b.location);
+	printf("D %f\n", distance);
 	float grav = (G*a.mass*b.mass)/(distance*distance);
 	float grav_accel = grav / a.mass; // solving for a, we have the force between so we want acceleration on a.
-	float total_vec = abs(q.x) + abs(q.y) + abs(q.z);
+	float total_vec = abs_r(q.x) + abs_r(q.y) + abs_r(q.z);
 	float po = grav_accel/total_vec;
 	r.x = q.x * po;
 	r.y = q.y * po;
 	r.z = q.z * po;
 	return r;
+}
+
+int main(int argc, char * argv[]) {
+	particle a;
+	particle b;
+	a.location.x = 0;
+	a.location.y = 0;
+	a.location.z = 0;
+	b.location.x = -10;
+	b.location.y = -10;
+	b.location.z = 0;
+	a.mass =  10000000000;
+	b.mass = 1000000;
+	
+	e_vector q;
+	q = gravity_calculate(a,b);
+	printf("%f %f %f\n", q.x, q.y, q.z);
+	return 1;
 }
 
