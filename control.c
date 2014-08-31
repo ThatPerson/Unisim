@@ -15,7 +15,7 @@ typedef struct {
 	float mass;
 } particle;
 
-float time_skip = 1;
+
 
 float abs_r(float p) {
 	if (p < 0)
@@ -57,7 +57,7 @@ int print_e_vector(e_vector p) {
 	return 1;
 }
 
-e_vector compute_velocity(e_vector vel, e_vector accel[], int acceli) {
+e_vector compute_velocity(e_vector vel, e_vector accel[], int acceli, float time_skip) {
 	e_vector p = vel;
 	print_e_vector(vel);
 	int i;
@@ -112,16 +112,49 @@ int main(int argc, char * argv[]) {
 		printf("unisim [number of particles] [time] [printtime] [length to run]\n");
 		return 1;
 	}
-	particle a[atoi(argv[1])];
+	
+	float timelength = atof(argv[4]);
+	float timebase = atof(argv[3]);
+	float timeswap = atof(argv[2]);
+	int length = atoi(argv[1]);
+	particle a[length];
 	
 	int i,p;
-	for (i = 0; i < atoi(argv[1]); i++) {
+	for (i = 0; i < length; i++) {
 		a[i] = generate_particle();
 	}
-	print_particle_set(a, atoi(argv[1]), 3, 6);
+	print_particle_set(a, length, 3, 6);
 	
+	float curr = 0, max = timebase/timeswap;
+	curr = max;
+	float ip;
+	int pp, qp;
+	e_vector tmp[1];
+	for (ip = 0; ip < timelength; ip += timeswap) {
 	
+		for (pp = 0; pp < length; pp++) {
+			for (qp = 0; qp < length; qp++) {
+				if (qp != pp) {
+					tmp[0] = gravity_calculate(a[pp], a[qp]);
+					a[pp].velocity = compute_velocity(a[pp].velocity, tmp, 1, timeswap);
+				}
+			}
+		}
+		for (pp = 0; pp < length; p++) {
+			a[pp].location.x += a[pp].velocity.x;
+			a[pp].location.y += a[pp].velocity.y;
+			a[pp].location.z += a[pp].velocity.z;
+		}
 	
+		//Calculate shit;
+		if (curr == max) {
+			printf("PRINT OUT %d\n", (int)(ip+0.5));
+			print_particle_set(a, length, ip, timelength);
+			curr = 0;
+		}
+		curr++;
+		
+	}
 	/*
 	particle a;
 	particle b;
