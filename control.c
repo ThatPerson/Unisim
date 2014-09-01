@@ -38,10 +38,10 @@ e_vector gravity_calculate(particle a, particle b) {
 	q.y = b.location.y - a.location.y;
 	q.z = b.location.z - a.location.z; // Basically, we just get the distance between them as e_vector. This is relative to a - a + q = b.
 	float distance = magnitude(a.location, b.location);
-	printf("D %f\n", distance);
 	if (distance == 0) {
-		distance = 0.001;
+		distance = 1;
 	}
+	printf("D %f\n", distance);
 	float grav = (G*a.mass*b.mass)/(distance*distance);
 	float grav_accel = grav / a.mass; // solving for a, we have the force between so we want acceleration on a.
 	float total_vec = abs_r(q.x) + abs_r(q.y) + abs_r(q.z);
@@ -57,16 +57,13 @@ int print_e_vector(e_vector p) {
 	return 1;
 }
 
-e_vector compute_velocity(e_vector vel, e_vector accel[], int acceli, float time_skip) {
+e_vector compute_velocity(e_vector vel, e_vector accel, float time_skip) {
 	e_vector p = vel;
 	print_e_vector(vel);
-	int i;
-	for (i = 0; i < acceli; i++) {
-		p.x += accel[i].x * time_skip;
-		p.y += accel[i].y * time_skip;
-		p.z += accel[i].z * time_skip;
-		print_e_vector(accel[i]);
-	}
+
+	p.x = p.x + (accel.x * time_skip);
+	p.y = p.y + (accel.y * time_skip);
+	p.z = p.z + (accel.z * time_skip);
 	print_e_vector(p);
 	return p;
 }
@@ -129,14 +126,14 @@ int main(int argc, char * argv[]) {
 	curr = max;
 	float ip;
 	int pp, qp;
-	e_vector tmp[1];
+	e_vector tmp;
 	for (ip = 0; ip < timelength; ip += timeswap) {
 	
 		for (pp = 0; pp < length; pp++) {
 			for (qp = 0; qp < length; qp++) {
 				if (qp != pp) {
-					tmp[0] = gravity_calculate(a[pp], a[qp]);
-					a[pp].velocity = compute_velocity(a[pp].velocity, tmp, 1, timeswap);
+					tmp = gravity_calculate(a[pp], a[qp]);
+					a[pp].velocity = compute_velocity(a[pp].velocity, tmp, timeswap);
 				}
 			}
 		}
