@@ -34,18 +34,29 @@ float magnitude(e_vector a, e_vector b) {
 
 e_vector gravity_calculate(particle a, particle b) {
 	e_vector q, r;
+
 	q.x = b.location.x - a.location.x;
+	
+
+	
 	q.y = b.location.y - a.location.y;
 	q.z = b.location.z - a.location.z; // Basically, we just get the distance between them as e_vector. This is relative to a - a + q = b.
 	float distance = magnitude(a.location, b.location);
 	if (distance == 0) {
 		distance = 1;
 	}
-	printf("D %f\n", distance);
+
 	float grav = (G*a.mass*b.mass)/(distance*distance);
 	float grav_accel = grav / a.mass; // solving for a, we have the force between so we want acceleration on a.
+
 	float total_vec = abs_r(q.x) + abs_r(q.y) + abs_r(q.z);
-	float po = grav_accel/total_vec;
+
+	float po;
+	if (total_vec == 0)
+		po = 0;
+	else
+		po = grav_accel/total_vec;
+
 	r.x = q.x * po;
 	r.y = q.y * po;
 	r.z = q.z * po;
@@ -59,12 +70,13 @@ int print_e_vector(e_vector p) {
 
 e_vector compute_velocity(e_vector vel, e_vector accel, float time_skip) {
 	e_vector p = vel;
-	print_e_vector(vel);
+
+
 
 	p.x = p.x + (accel.x * time_skip);
 	p.y = p.y + (accel.y * time_skip);
 	p.z = p.z + (accel.z * time_skip);
-	print_e_vector(p);
+
 	return p;
 }
 
@@ -120,7 +132,6 @@ int main(int argc, char * argv[]) {
 	for (i = 0; i < length; i++) {
 		a[i] = generate_particle();
 	}
-	print_particle_set(a, length, 3, 6);
 	
 	float curr = 0, max = timebase/timeswap;
 	curr = max;
@@ -132,12 +143,13 @@ int main(int argc, char * argv[]) {
 		for (pp = 0; pp < length; pp++) {
 			for (qp = 0; qp < length; qp++) {
 				if (qp != pp) {
-					tmp = gravity_calculate(a[pp], a[qp]);
-					a[pp].velocity = compute_velocity(a[pp].velocity, tmp, timeswap);
+					
+					a[pp].velocity = compute_velocity(a[pp].velocity, gravity_calculate(a[pp], a[qp]), timeswap);
 				}
 			}
 		}
-		for (pp = 0; pp < length; p++) {
+
+		for (pp = 0; pp < length; pp++) {
 			a[pp].location.x += a[pp].velocity.x;
 			a[pp].location.y += a[pp].velocity.y;
 			a[pp].location.z += a[pp].velocity.z;
@@ -149,8 +161,8 @@ int main(int argc, char * argv[]) {
 			print_particle_set(a, length, ip, timelength);
 			curr = 0;
 		}
-		curr++;
-		
+		curr = curr + 1;
+
 	}
 	/*
 	particle a;
