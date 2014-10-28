@@ -57,9 +57,9 @@ e_vector gravity_calculate(particle a, particle b) {
 	else
 		po = grav_accel/total_vec;
 
-	r.x = q.x * po;
-	r.y = q.y * po;
-	r.z = q.z * po;
+	r.x = -q.x * po;
+	r.y = -q.y * po;
+	r.z = -q.z * po;
 	return r;
 }
 
@@ -84,7 +84,8 @@ int print_particle_set(particle p[], int pl, float time, float max_time) {
 	printf("= %3f%% ========= %4f seconds ===============\n", 100*(time/max_time), time);
 	int i;
 	for (i = 0; i < pl; i++) {
-		printf("%d: %f/%f/%f - %f/%f/%f\n", i, p[i].location.x, p[i].location.y, p[i].location.z, p[i].velocity.x, p[i].velocity.y, p[i].velocity.z);
+		printf("%f,%f,%f\n", p[i].location.x, p[i].location.y, p[i].location.z);
+// 		printf("%f/%f/%f - %f/%f/%f\n", i, p[i].location.x, p[i].location.y, p[i].location.z, p[i].velocity.x, p[i].velocity.y, p[i].velocity.z);
 	}
 	return 1;
 }
@@ -92,9 +93,9 @@ int print_particle_set(particle p[], int pl, float time, float max_time) {
 particle generate_particle(void) {
 	particle q;
 	q.mass = 100;
-	q.location.x = 0;
-	q.location.y = 0;
-	q.location.z = 0;
+	q.location.x = (rand()%10)-5;
+	q.location.y = (rand()%10)-5;
+	q.location.z = (rand()%10)-5;
 	q.velocity.x = (rand()%10)-5;
 	q.velocity.y = (rand()%10)-5;
 	q.velocity.z = (rand()%10)-5;
@@ -157,7 +158,6 @@ int main(int argc, char * argv[]) {
 	
 		//Calculate shit;
 		if (curr == max) {
-			printf("PRINT OUT %d\n", (int)(ip+0.5));
 			print_particle_set(a, length, ip, timelength);
 			curr = 0;
 		}
