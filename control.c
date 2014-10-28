@@ -103,13 +103,13 @@ particle generate_particle(void) {
 	q.location.x = (rand()%10)-5;
 	q.location.y = (rand()%10)-5;
 	q.location.z = (rand()%10)-5;
-	//q.velocity.x = (rand()%10)-5;
-	//q.velocity.y = (rand()%10)-5;
-	//q.velocity.z = (rand()%10)-5;
-	q.velocity.x  = 0;
+	q.velocity.x = (rand()%10)-5;
+	q.velocity.y = (rand()%10)-5;
+	q.velocity.z = (rand()%10)-5;
+	/*q.velocity.x  = 0;
 	q.velocity.y = 0;
 	q.velocity.z = 0;
-	return q;
+	*/return q;
 }
 
 int main(int argc, char * argv[]) {
