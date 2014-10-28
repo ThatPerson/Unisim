@@ -5,6 +5,8 @@
 
 #define G 1
 
+int curr_print = 1;
+
 typedef struct {
 	float x, y, z;
 } e_vector;
@@ -57,9 +59,9 @@ e_vector gravity_calculate(particle a, particle b) {
 	else
 		po = grav_accel/total_vec;
 
-	r.x = -q.x * po;
-	r.y = -q.y * po;
-	r.z = -q.z * po;
+	r.x = -(q.x * po);
+	r.y = -(q.y * po);
+	r.z = -(q.z * po);
 	return r;
 }
 
@@ -81,12 +83,17 @@ e_vector compute_velocity(e_vector vel, e_vector accel, float time_skip) {
 }
 
 int print_particle_set(particle p[], int pl, float time, float max_time) {
+	char filename[500];
+	sprintf(filename, "data%d", curr_print);
+	curr_print++;
+	FILE *f = fopen(filename, "w");
 	printf("= %3f%% ========= %4f seconds ===============\n", 100*(time/max_time), time);
 	int i;
 	for (i = 0; i < pl; i++) {
-		printf("%f,%f,%f\n", p[i].location.x, p[i].location.y, p[i].location.z);
+		fprintf(f, "%f %f %f\n", p[i].location.x, p[i].location.y, p[i].location.z);
 // 		printf("%f/%f/%f - %f/%f/%f\n", i, p[i].location.x, p[i].location.y, p[i].location.z, p[i].velocity.x, p[i].velocity.y, p[i].velocity.z);
 	}
+	fclose(f);
 	return 1;
 }
 
@@ -96,9 +103,12 @@ particle generate_particle(void) {
 	q.location.x = (rand()%10)-5;
 	q.location.y = (rand()%10)-5;
 	q.location.z = (rand()%10)-5;
-	q.velocity.x = (rand()%10)-5;
-	q.velocity.y = (rand()%10)-5;
-	q.velocity.z = (rand()%10)-5;
+	//q.velocity.x = (rand()%10)-5;
+	//q.velocity.y = (rand()%10)-5;
+	//q.velocity.z = (rand()%10)-5;
+	q.velocity.x  = 0;
+	q.velocity.y = 0;
+	q.velocity.z = 0;
 	return q;
 }
 
